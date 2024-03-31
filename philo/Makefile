@@ -24,7 +24,7 @@ MKDIR					:= mkdir -p
 RM						:= rm -rf
 
 # Sources
-FILES					:= philosophers set_table
+FILES					:= common manage_dinner philosophers set_table
 SOURCES					:= $(addprefix $(SOURCES_DIR), $(addsuffix .c, $(FILES)))
 OBJECTS					:= $(addprefix $(OBJECTS_DIR), $(addsuffix .o, $(FILES)))
 HEADERS					:= -I $(HEADERS_DIR)

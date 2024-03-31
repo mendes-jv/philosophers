@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_table.c                                        :+:      :+:    :+:   */
+/*   manage_dinner.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jovicto2 <jovicto2@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,32 +12,7 @@
 
 #include "../includes/philosophers.h"
 
-static void		check_values(t_info info);
-
-void	set_table(t_info *table, char **args)
+void	manage_dinner(t_info *table)
 {
-	*table = (t_info){
-			atod(args[0]),
-			atod(args[1]),
-			atod(args[2]),
-			atod(args[3]),
-			atod(args[4])
-	};
-	check_values(*table);
+	(void)table;
 }
-
-static void	check_values(t_info info)
-{
-	if (info.philo_count < 1 || info.philo_count > 200)
-		print_error(WRONG_PHILO_COUNT);
-	if (info.time_to_die < 60 || info.time_to_die > 1000000)
-		print_error(WRONG_TIME_TO_DIE);
-	if (info.time_to_eat < 60 || info.time_to_eat > 1000000)
-		print_error(WRONG_TIME_TO_EAT);
-	if (info.time_to_sleep < 60 || info.time_to_sleep > 1000000)
-		print_error(WRONG_TIME_TO_SLEEP);
-	if (info.meal_count < 0 || info.meal_count > 200)
-		print_error(WRONG_MEAL_COUNT);
-}
-
-
