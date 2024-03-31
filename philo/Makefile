@@ -19,7 +19,7 @@ HEADERS_DIR				:= includes/
 
 MAKE					:= make
 CC						:= cc
-CFLAGS					:= -Wall -Wextra -Werror -Wunreachable-code -lpthread -Ofast -g3 -O3
+CFLAGS					:= -Wall -Wextra -Werror -Wunreachable-code -Ofast -g3 -O3
 MKDIR					:= mkdir -p
 RM						:= rm -rf
 
@@ -50,7 +50,7 @@ all:
     fi
 
 $(NAME): $(OBJECTS)
-	@$(CC) $(CFLAGS) $^ -o $(NAME) $(INCLUDES)
+	@$(CC) $(CFLAGS) $^ -o $(NAME) -lpthread $(INCLUDES)
 
 clean:
 	@if [ -d $(OBJECTS_DIR) ]; then \

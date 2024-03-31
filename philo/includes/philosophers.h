@@ -22,43 +22,48 @@
 // Structs
 typedef struct s_info
 {
-	int	philo_count;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	meal_count;
+	int				philo_count;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				meal_count;
+	pthread_t		*philosophers;
+	pthread_mutex_t	*forks;
 }	t_info;
 
 //Definitions
 # ifndef WRONG_ARG_COUNT
-#  define WRONG_ARG_COUNT "\033[0;31mInvalid number of arguments.\nUsage: ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [optional_number_of_meals]\n\033[0m"
+#  define WRONG_ARG_COUNT "\033[0;31mInvalid number of arguments.\nUsage: ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [optional_number_of_meals]\033[0m"
 # endif //WRONG_ARG_COUNT
 
 # ifndef WRONG_PHILO_COUNT
-#  define WRONG_PHILO_COUNT "\033[0;31mInvalid number of philosophers. Must be a digit between 1 and 200.\n\033[0m"
+#  define WRONG_PHILO_COUNT "\033[0;31mInvalid number of philosophers. Must be a digit between 1 and 200.\033[0m"
 # endif //WRONG_PHILO_COUNT
 
 # ifndef WRONG_TIME_TO_DIE
-#  define WRONG_TIME_TO_DIE "\033[0;31mInvalid time to die. Must be a digit between 60 and 1000000.\n\033[0m"
+#  define WRONG_TIME_TO_DIE "\033[0;31mInvalid time to die. Must be a digit between 60 and 1000000.\033[0m"
 # endif //WRONG_TIME_TO_DIE
 
 # ifndef WRONG_TIME_TO_EAT
-#  define WRONG_TIME_TO_EAT "\033[0;31mInvalid time to eat. Must be a digit between 60 and 1000000.\n\033[0m"
+#  define WRONG_TIME_TO_EAT "\033[0;31mInvalid time to eat. Must be a digit between 60 and 1000000.\033[0m"
 # endif //WRONG_TIME_TO_EAT
 
 # ifndef WRONG_TIME_TO_SLEEP
-#  define WRONG_TIME_TO_SLEEP "\033[0;31mInvalid time to sleep. Must be a digit between 60 and 1000000.\n\033[0m"
+#  define WRONG_TIME_TO_SLEEP "\033[0;31mInvalid time to sleep. Must be a digit between 60 and 1000000.\033[0m"
 # endif //WRONG_TIME_TO_SLEEP
 
 # ifndef WRONG_MEAL_COUNT
-#  define WRONG_MEAL_COUNT "\033[0;31mInvalid number of meals. Must be between 0 and 200.\n\033[0m"
+#  define WRONG_MEAL_COUNT "\033[0;31mInvalid number of meals. Must be between 0 and 200.\033[0m"
 # endif //WRONG_MEAL_COUNT
 
+# ifndef MALLOC_ERROR
+#  define MALLOC_ERROR "\033[0;31mError allocating memory.\033[0m"
+# endif //MALLOC_ERROR
+
 // Prototypes
-void	set_table(t_info *table, char **args);
-void	manage_dinner(t_info *table);
-void	print_error(char *message);
-size_t	alen(const char *s);
 int		atod(char *arg);
+void	error(char *message);
+void	manage_dinner(t_info *table);
+void	set_table(t_info *table, char **args);
 
 #endif //PHILOSOPHERS_H

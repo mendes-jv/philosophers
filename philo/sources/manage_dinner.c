@@ -12,7 +12,28 @@
 
 #include "../includes/philosophers.h"
 
+static void	*philosopher(__attribute__((unused)) void *arg);
+
 void	manage_dinner(t_info *table)
 {
-	(void)table;
+	int index;
+
+	index = 0;
+	while (index < table->philo_count)
+	{
+		pthread_create(&table->philosophers[index], NULL, philosopher, NULL);
+		index++;
+	}
+	index = 0;
+	while (index < table->philo_count)
+	{
+		pthread_join(table->philosophers[index], NULL);
+		index++;
+	}
+}
+
+static void	*philosopher(__attribute__((unused)) void *arg)
+{
+	printf("Philosopher is thinking\n");
+	return (NULL);
 }

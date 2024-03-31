@@ -12,21 +12,10 @@
 
 #include "../includes/philosophers.h"
 
-void	print_error(char *message)
+void	error(char *message)
 {
-	if (write(STDERR_FILENO, message, alen(message)) == -1)
-		perror("write");
+	printf("%s\n", message);
 	exit(EXIT_FAILURE);
-}
-
-size_t alen(const char *s)
-{
-	size_t i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
 }
 
 int	atod(char *arg)
