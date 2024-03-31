@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   push_swap.h                                        :+:      :+:    :+:   */
+/*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jovicto2 <jovicto2@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,7 +14,10 @@
 
 int	main(int argc, char **argv)
 {
-	(void)argc;
-	(void)argv;
+	t_info	table;
+	if (argc < 5 || argc > 6)
+		perror(WRONG_ARG_COUNT);
+	set_table(&table, ++argv);
+	manage_dinner(&table);
 	return (EXIT_SUCCESS);
 }
