@@ -13,6 +13,8 @@
 #include "../includes/philosophers.h"
 
 static void	check_values(t_info info);
+static bool	set_forks(t_mutex *forks, int philo_count);
+static void	set_philos(t_philo *philos, int philo_count, t_mutex *forks);
 
 void	set_table(t_info *table, char **args)
 {
@@ -22,14 +24,20 @@ void	set_table(t_info *table, char **args)
 			atod(args[2]),
 			atod(args[3]),
 			atod(args[4]),
+			get_time(),
 			NULL,
 			NULL
 	};
 	check_values(*table);
-	table->philosophers = malloc(sizeof(pthread_t) * table->philo_count);
-	table->forks = malloc(sizeof(pthread_mutex_t) * table->philo_count);
-	if (!table->philosophers || !table->forks)
+	table->philosophers = malloc(sizeof(t_philo) * table->philo_count);
+	if (!table->philosophers)
 		error(MALLOC_ERROR);
+	table->forks = malloc(sizeof(pthread_mutex_t) * table->philo_count);
+	if(!table->forks)
+		free(table->philosophers), error(MALLOC_ERROR);
+	if (!set_forks(table->forks, table->philo_count))
+		free(table->forks), free(table->philosophers), error(MUTEX_ERROR);
+	set_philos(table->philosophers, table->philo_count, table->forks);
 }
 
 static void	check_values(t_info info)
@@ -49,4 +57,39 @@ static void	check_values(t_info info)
 		message = WRONG_MEAL_COUNT;
 	if (message)
 		error(message);
+}
+
+static bool	set_forks(t_mutex *forks, int philo_count)
+{
+	int	index;
+
+	index = 0;
+	while (index < philo_count)
+		if (pthread_mutex_init(forks + index++, NULL))
+		{
+			while (index)
+				pthread_mutex_destroy(forks + index--);
+			return false;
+		}
+	return true;
+}
+
+static void set_philos(t_philo *philos, int philo_count, t_mutex *forks)
+{
+	int	index;
+
+	index = 0;
+	while (index < philo_count)
+	{
+		philos[index] = (t_philo){
+			.meals = 0,
+			.meal_time = 0,
+			.left_fork = forks + index,
+			.right_fork = forks + ((index + 1) % philo_count),
+			.state = THINKING
+		};
+		index++;
+	}
+	if (philo_count == 1)
+		philos[0].right_fork = NULL;
 }

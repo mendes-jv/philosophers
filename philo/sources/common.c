@@ -12,12 +12,6 @@
 
 #include "../includes/philosophers.h"
 
-void	error(char *message)
-{
-	printf("%s\n", message);
-	exit(EXIT_FAILURE);
-}
-
 int	atod(char *arg)
 {
 	int	number;
@@ -32,4 +26,18 @@ int	atod(char *arg)
 		number = (number * 10) + (*arg++ - '0');
 	}
 	return (number);
+}
+
+void	error(char *message)
+{
+	printf("%s\n", message);
+	exit(EXIT_FAILURE);
+}
+
+size_t	get_time(void)
+{
+	struct timeval	time;
+
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }

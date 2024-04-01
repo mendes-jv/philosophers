@@ -15,11 +15,33 @@
 
 //Includes
 # include <pthread.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <sys/time.h>
 # include <unistd.h>
 
 // Structs
+typedef pthread_mutex_t	t_mutex;
+
+typedef enum e_state
+{
+	THINKING,
+	EATING,
+	SLEEPING,
+	DEAD
+}	t_state;
+
+typedef struct s_philo
+{
+	pthread_t		tid;
+	int				meals;
+	size_t			meal_time;
+	t_mutex			*left_fork;
+	t_mutex			*right_fork;
+	t_state			state;
+}	t_philo;
+
 typedef struct s_info
 {
 	int				philo_count;
@@ -27,8 +49,9 @@ typedef struct s_info
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				meal_count;
-	pthread_t		*philosophers;
-	pthread_mutex_t	*forks;
+	size_t 			start_time;
+	t_philo			*philosophers;
+	t_mutex			*forks;
 }	t_info;
 
 //Definitions
@@ -60,9 +83,14 @@ typedef struct s_info
 #  define MALLOC_ERROR "\033[0;31mError allocating memory.\033[0m"
 # endif //MALLOC_ERROR
 
+# ifndef MUTEX_ERROR
+#  define MUTEX_ERROR "\033[0;31mError creating mutex.\033[0m"
+# endif //MUTEX_ERROR
+
 // Prototypes
 int		atod(char *arg);
 void	error(char *message);
+size_t	get_time(void);
 void	manage_dinner(t_info *table);
 void	set_table(t_info *table, char **args);
 

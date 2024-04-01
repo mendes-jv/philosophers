@@ -19,5 +19,7 @@ int	main(int argc, char **argv)
 		error(WRONG_ARG_COUNT);
 	set_table(&table, ++argv);
 	manage_dinner(&table);
+	free(table.forks);
+	free(table.philosophers);
 	return (EXIT_SUCCESS);
 }
