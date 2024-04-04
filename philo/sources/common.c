@@ -43,7 +43,8 @@ size_t	get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	note(t_info *id, int ego, char *message)
+void	note(size_t start_time, int id, char *message)
 {
-	printf("%zu %d %s\n", get_time() - id->start_time, ++ego, message);
+	//TODO: try printf mutex
+	printf("%zu %d %s\n", get_time() - start_time, id, message);
 }

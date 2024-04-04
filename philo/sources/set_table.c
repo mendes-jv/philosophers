@@ -14,7 +14,7 @@
 
 static void	check_values(t_info info);
 static bool	set_forks(t_mutex *forks, ssize_t philo_count);
-static void	set_philos(t_philo *philos, ssize_t philo_count, t_mutex *forks);
+static void	set_philos(t_philo *philos, t_info *table, t_mutex *forks);
 
 void	set_table(t_info *table, char **args)
 {
@@ -28,16 +28,16 @@ void	set_table(t_info *table, char **args)
 	table->forks = malloc(sizeof(pthread_mutex_t) * table->philo_count);
 	if (!table->forks)
 	{
-		free(table->philosophers)
+		free(table->philosophers);
 		error(MALLOC_ERROR);
 	}
 	if (!set_forks(table->forks, table->philo_count))
 	{
-		free(table->forks)
-		free(table->philosophers)
+		free(table->forks);
+		free(table->philosophers);
 		error(MUTEX_ERROR);
 	}
-	set_philos(table->philosophers, table->philo_count, table->forks);
+	set_philos(table->philosophers, table, table->forks);
 }
 
 static void	check_values(t_info info)
@@ -76,20 +76,14 @@ static bool	set_forks(t_mutex *forks, ssize_t philo_count)
 	return (true);
 }
 
-static void	set_philos(t_philo *philos, ssize_t philo_count, t_mutex *forks)
+static void	set_philos(t_philo *philos, t_info *table, t_mutex *forks )
 {
 	int	index;
 
-	index = 0;
-	while (index < philo_count)
-	{
-		philos[index] = (t_philo){
-			.meals = 0,
-			.meal_time = get_time(),
-			.left_fork = forks + index,
-			.right_fork = forks + ((index + 1) % philo_count),
-			.is_alive = true
-		};
-		index++;
-	}
+	index = -1;
+	while (++index < table->philo_count)
+		philos[index] = (t_philo){index + 1, table->meal_count,
+			table->start_time, table->time_to_die, table->time_to_eat,
+			table->time_to_sleep, table->start_time, forks + index,
+			forks + ((index + 1) % table->philo_count), true, 0};
 }

@@ -27,12 +27,17 @@ typedef pthread_mutex_t	t_mutex;
 
 typedef struct s_philo
 {
-	pthread_t	tid;
-	size_t		meals;
+	size_t		id;
+	size_t		meals_count;
 	size_t		meal_time;
+	ssize_t		time_to_die;
+	ssize_t		time_to_eat;
+	ssize_t		time_to_sleep;
+	size_t		start_time;
 	t_mutex		*left_fork;
 	t_mutex		*right_fork;
 	bool		is_alive;
+	pthread_t	tid;
 }	t_philo;
 
 typedef struct s_info
@@ -46,11 +51,6 @@ typedef struct s_info
 	t_philo	*philosophers;
 	t_mutex	*forks;
 }	t_info;
-
-typedef struct s_arg {
-	t_info	*table;
-	int		index;
-}	t_arg;
 
 //Definitions
 # ifndef WRONG_ARG_COUNT
@@ -86,7 +86,8 @@ and SIZE_T_MAX/1000.\033[0m"
 
 # ifndef WRONG_MEAL_COUNT
 #  define WRONG_MEAL_COUNT "\
-\033[0;31mInvalid number of meals. Must be between 0 and SIZE_T_MAX/1000.\033[0m"
+\033[0;31mInvalid number of meals_count. Must be between 0 and \
+SIZE_T_MAX/1000.\033[0m"
 # endif //WRONG_MEAL_COUNT
 
 # ifndef MALLOC_ERROR
@@ -119,10 +120,13 @@ and SIZE_T_MAX/1000.\033[0m"
 
 // Prototypes
 ssize_t	atod(char *arg);
+void	eat(t_philo *philo);
 void	error(char *message);
 size_t	get_time(void);
 void	manage_dinner(t_info *table);
-void	note(t_info *id, int ego, char *message);
+void	note(size_t start_time, int id, char *message);
 void	set_table(t_info *table, char **args);
+void	sleep_and_think(t_philo *philo);
+bool	take_forks(t_philo *philo);
 
 #endif //PHILOSOPHERS_H
