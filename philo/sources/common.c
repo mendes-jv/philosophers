@@ -12,16 +12,16 @@
 
 #include "../includes/philosophers.h"
 
-int	atod(char *arg)
+ssize_t	atod(char *arg)
 {
-	int	number;
+	ssize_t	number;
 
 	if (!arg)
 		return (0);
 	number = 0;
 	while (*arg)
 	{
-		if (*arg < '0' || *arg > '9')
+		if (*arg < '0' || *arg > '9' || (number * 10) > (ssize_t)(ULONG_MAX / 1000))
 			return (-1);
 		number = (number * 10) + (*arg++ - '0');
 	}
@@ -40,4 +40,9 @@ size_t	get_time(void)
 
 	gettimeofday(&time, NULL);
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
+void	note(t_info *id, int ego, char *message)
+{
+	printf("%zu %d %s\n", get_time() - id->start_time, ++ego, message);
 }

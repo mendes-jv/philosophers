@@ -13,16 +13,16 @@
 #include "../includes/philosophers.h"
 
 static void	check_values(t_info info);
-static bool	set_forks(t_mutex *forks, int philo_count);
-static void	set_philos(t_philo *philos, int philo_count, t_mutex *forks);
+static bool	set_forks(t_mutex *forks, ssize_t philo_count);
+static void	set_philos(t_philo *philos, ssize_t philo_count, t_mutex *forks);
 
 void	set_table(t_info *table, char **args)
 {
 	*table = (t_info){
 			atod(args[0]),
-			atod(args[1]),
-			atod(args[2]),
-			atod(args[3]),
+			atod(args[1]) * 1000,
+			atod(args[2]) * 1000,
+			atod(args[3]) * 1000,
 			atod(args[4]),
 			get_time(),
 			NULL,
@@ -47,19 +47,19 @@ static void	check_values(t_info info)
 	message = NULL;
 	if (info.philo_count < 1 || info.philo_count > 200)
 		message = WRONG_PHILO_COUNT;
-	if (info.time_to_die < 60 || info.time_to_die > 1000000)
+	if (info.time_to_die < 60)
 		message = WRONG_TIME_TO_DIE;
-	if (info.time_to_eat < 60 || info.time_to_eat > 1000000)
+	if (info.time_to_eat < 60)
 		message = WRONG_TIME_TO_EAT;
-	if (info.time_to_sleep < 60 || info.time_to_sleep > 1000000)
+	if (info.time_to_sleep < 60)
 		message = WRONG_TIME_TO_SLEEP;
-	if (info.meal_count < 0 || info.meal_count > 200)
+	if (info.meal_count < 0)
 		message = WRONG_MEAL_COUNT;
 	if (message)
 		error(message);
 }
 
-static bool	set_forks(t_mutex *forks, int philo_count)
+static bool	set_forks(t_mutex *forks, ssize_t philo_count)
 {
 	int	index;
 
@@ -74,7 +74,7 @@ static bool	set_forks(t_mutex *forks, int philo_count)
 	return true;
 }
 
-static void set_philos(t_philo *philos, int philo_count, t_mutex *forks)
+static void set_philos(t_philo *philos, ssize_t philo_count, t_mutex *forks)
 {
 	int	index;
 
@@ -83,13 +83,11 @@ static void set_philos(t_philo *philos, int philo_count, t_mutex *forks)
 	{
 		philos[index] = (t_philo){
 			.meals = 0,
-			.meal_time = 0,
+			.meal_time = get_time(),
 			.left_fork = forks + index,
 			.right_fork = forks + ((index + 1) % philo_count),
-			.state = THINKING
+			.is_alive = true
 		};
 		index++;
 	}
-	if (philo_count == 1)
-		philos[0].right_fork = NULL;
 }
