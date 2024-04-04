@@ -21,7 +21,8 @@ ssize_t	atod(char *arg)
 	number = 0;
 	while (*arg)
 	{
-		if (*arg < '0' || *arg > '9' || (number * 10) > (ssize_t)(ULONG_MAX / 1000))
+		if (*arg < '0' || *arg > '9'
+			|| (number * 10) > (ssize_t)(ULONG_MAX / 1000))
 			return (-1);
 		number = (number * 10) + (*arg++ - '0');
 	}

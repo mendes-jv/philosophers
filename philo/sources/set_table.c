@@ -18,25 +18,25 @@ static void	set_philos(t_philo *philos, ssize_t philo_count, t_mutex *forks);
 
 void	set_table(t_info *table, char **args)
 {
-	*table = (t_info){
-			atod(args[0]),
-			atod(args[1]) * 1000,
-			atod(args[2]) * 1000,
-			atod(args[3]) * 1000,
-			atod(args[4]),
-			get_time(),
-			NULL,
-			NULL
-	};
+	*table = (t_info){atod(args[0]), atod(args[1]) * 1000,
+		atod(args[2]) * 1000, atod(args[3]) * 1000, atod(args[4]),
+		get_time(), NULL, NULL};
 	check_values(*table);
 	table->philosophers = malloc(sizeof(t_philo) * table->philo_count);
 	if (!table->philosophers)
 		error(MALLOC_ERROR);
 	table->forks = malloc(sizeof(pthread_mutex_t) * table->philo_count);
-	if(!table->forks)
-		free(table->philosophers), error(MALLOC_ERROR);
+	if (!table->forks)
+	{
+		free(table->philosophers)
+		error(MALLOC_ERROR);
+	}
 	if (!set_forks(table->forks, table->philo_count))
-		free(table->forks), free(table->philosophers), error(MUTEX_ERROR);
+	{
+		free(table->forks)
+		free(table->philosophers)
+		error(MUTEX_ERROR);
+	}
 	set_philos(table->philosophers, table->philo_count, table->forks);
 }
 
@@ -65,16 +65,18 @@ static bool	set_forks(t_mutex *forks, ssize_t philo_count)
 
 	index = 0;
 	while (index < philo_count)
+	{
 		if (pthread_mutex_init(forks + index++, NULL))
 		{
 			while (index)
 				pthread_mutex_destroy(forks + index--);
-			return false;
+			return (false);
 		}
-	return true;
+	}
+	return (true);
 }
 
-static void set_philos(t_philo *philos, ssize_t philo_count, t_mutex *forks)
+static void	set_philos(t_philo *philos, ssize_t philo_count, t_mutex *forks)
 {
 	int	index;
 

@@ -15,6 +15,7 @@
 int	main(int argc, char **argv)
 {
 	t_info	table;
+
 	if (argc < 5 || argc > 6)
 		error(WRONG_ARG_COUNT);
 	set_table(&table, ++argv);

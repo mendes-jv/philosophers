@@ -16,12 +16,15 @@ static void	*conscience(void *arg);
 
 void	manage_dinner(t_info *table)
 {
-	int index;
+	int	index;
 
 	index = 0;
 	while (index < table->philo_count)
+	{
 		pthread_create(&table->philosophers[index].tid, NULL,
-					   conscience, &(t_arg) {table, index}), index++;
+			conscience, &(t_arg){table, index});
+		index++;
+	}
 	index = 0;
 	while (index < table->philo_count)
 		pthread_join(table->philosophers[index++].tid, NULL);
@@ -34,9 +37,9 @@ static void	*conscience(void *arg)
 {
 	t_philo	*superego;
 	t_info	*id;
-	int 	ego;
+	int		ego;
 
-	ego = ((t_arg*)arg)->index;
+	ego = ((t_arg *)arg)->index;
 	id = ((t_arg *)arg)->table;
 	superego = id->philosophers + ego;
 	while (superego->is_alive)
@@ -44,9 +47,15 @@ static void	*conscience(void *arg)
 		pthread_mutex_lock(superego->left_fork);
 		note(id, ego, TAKEN_FORK);
 		if (superego->right_fork == superego->left_fork)
-			return (usleep(id->time_to_die), note(id, ego, DEAD), (NULL));
-		pthread_mutex_lock(superego->right_fork), note(id, ego, TAKEN_FORK);
-		note(id, ego, EATING), usleep(id->time_to_eat);
+		{
+			usleep(id->time_to_die);
+			note(id, ego, DEAD);
+			return (NULL);
+		}
+		pthread_mutex_lock(superego->right_fork);
+		note(id, ego, TAKEN_FORK);
+		note(id, ego, EATING);
+		usleep(id->time_to_eat);
 		superego->meal_time = get_time();
 		superego->meals++;
 		pthread_mutex_unlock(superego->left_fork);
