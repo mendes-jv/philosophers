@@ -39,8 +39,8 @@ static void	*conscience(void *arg)
 	t_philo	*philo;
 
 	philo = ((t_philo *)arg);
-
-	//TODO: try to put sleep here with odd-even strategy
+	if (philo->id % 2)
+		usleep(100);
 	while (philo->is_alive)
 	{
 		if (!take_forks(philo))
