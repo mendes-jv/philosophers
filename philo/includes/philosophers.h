@@ -36,6 +36,7 @@ typedef struct s_philo
 	size_t		start_time;
 	t_mutex		*left_fork;
 	t_mutex		*right_fork;
+	t_mutex 	*print;
 	bool		is_alive;
 	pthread_t	tid;
 }	t_philo;
@@ -124,7 +125,7 @@ void	eat(t_philo *philo);
 void	error(char *message);
 size_t	get_time(void);
 void	manage_dinner(t_info *table);
-void	note(size_t start_time, int id, char *message);
+void	note(size_t start_time, int id, char *message, t_mutex *print);
 void	set_table(t_info *table, char **args);
 void	sleep_and_think(t_philo *philo);
 bool	take_forks(t_philo *philo);

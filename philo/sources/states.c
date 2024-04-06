@@ -25,8 +25,8 @@ bool	take_forks(t_philo *philo)
 		pthread_mutex_unlock(philo->left_fork);
 		return (false);
 	}
-	note(philo->start_time, philo->id, TAKEN_FORK);
-	note(philo->start_time, philo->id, TAKEN_FORK);
+	note(philo->start_time, philo->id, TAKEN_FORK, philo->print);
+	note(philo->start_time, philo->id, TAKEN_FORK, philo->print);
 	return (true);
 }
 
@@ -43,7 +43,7 @@ bool	take_forks(t_philo *philo)
 
 void	eat(t_philo *philo)
 {
-	note(philo->start_time, philo->id, EATING);
+	note(philo->start_time, philo->id, EATING, philo->print);
 	usleep(philo->time_to_eat);
 	philo->meal_time = get_time();
 	philo->meals_count--;
@@ -53,7 +53,7 @@ void	eat(t_philo *philo)
 
 void	sleep_and_think(t_philo *philo)
 {
-	note(philo->start_time, philo->id, SLEEPING);
+	note(philo->start_time, philo->id, SLEEPING, philo->print);
 	usleep(philo->time_to_sleep);
-	note(philo->start_time, philo->id, THINKING);
+	note(philo->start_time, philo->id, THINKING, philo->print);
 }

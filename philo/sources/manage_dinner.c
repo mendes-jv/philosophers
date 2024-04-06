@@ -31,6 +31,7 @@ void	manage_dinner(t_info *table)
 	index = 0;
 	while (index < table->philo_count)
 		pthread_mutex_destroy(&table->forks[index++]);
+	pthread_mutex_destroy(table->philosophers->print);
 }
 
 static void	*conscience(void *arg)

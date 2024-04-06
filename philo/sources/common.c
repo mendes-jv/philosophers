@@ -43,8 +43,9 @@ size_t	get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	note(size_t start_time, int id, char *message)
+void	note(size_t start_time, int id, char *message, t_mutex *print)
 {
-	//TODO: try printf mutex
+	pthread_mutex_lock(print);
 	printf("%zu %d %s\n", get_time() - start_time, id, message);
+	pthread_mutex_unlock(print);
 }

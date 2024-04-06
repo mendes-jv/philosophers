@@ -78,12 +78,19 @@ static bool	set_forks(t_mutex *forks, ssize_t philo_count)
 
 static void	set_philos(t_philo *philos, t_info *table, t_mutex *forks )
 {
-	int	index;
+	int		index;
+	t_mutex print;
 
 	index = -1;
+	if (pthread_mutex_init(&print, NULL))
+	{
+		free(table->forks);
+		free(table->philosophers);
+		error(MUTEX_ERROR);
+	}
 	while (++index < table->philo_count)
 		philos[index] = (t_philo){index + 1, table->meal_count,
 			table->start_time, table->time_to_die, table->time_to_eat,
 			table->time_to_sleep, table->start_time, forks + index,
-			forks + ((index + 1) % table->philo_count), true, 0};
+			forks + ((index + 1) % table->philo_count), &print, true, 0};
 }
