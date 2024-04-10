@@ -80,10 +80,12 @@ static void	set_philos(t_philo *philos, t_info *table, t_mutex *forks )
 {
 	int		index;
 	t_mutex print;
+	t_mutex life;
+	t_mutex meal;
 
 	index = -1;
-	if (pthread_mutex_init(&print, NULL))
-	{
+	if (pthread_mutex_init(&print, NULL) || pthread_mutex_init(&life, NULL) || pthread_mutex_init(&meal, NULL)
+	{ //TODO: destroy forks created when a fails happens after another init
 		free(table->forks);
 		free(table->philosophers);
 		error(MUTEX_ERROR);
@@ -92,5 +94,5 @@ static void	set_philos(t_philo *philos, t_info *table, t_mutex *forks )
 		philos[index] = (t_philo){index + 1, table->meal_count,
 			table->start_time, table->time_to_die, table->time_to_eat,
 			table->time_to_sleep, table->start_time, forks + index,
-			forks + ((index + 1) % table->philo_count), &print, true, 0};
+			forks + ((index + 1) % table->philo_count), &print, &life, &meal, 0};
 }

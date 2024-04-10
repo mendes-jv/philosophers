@@ -37,6 +37,8 @@ typedef struct s_philo
 	t_mutex		*left_fork;
 	t_mutex		*right_fork;
 	t_mutex 	*print;
+	t_mutex		*life;
+	t_mutex 	*meal;
 	bool		is_alive;
 	pthread_t	tid;
 }	t_philo;
@@ -121,13 +123,11 @@ SIZE_T_MAX/1000.\033[0m"
 
 // Prototypes
 ssize_t	atod(char *arg);
-void	eat(t_philo *philo);
+void	*conscience(void *arg);
 void	error(char *message);
 size_t	get_time(void);
 void	manage_dinner(t_info *table);
 void	note(size_t start_time, int id, char *message, t_mutex *print);
 void	set_table(t_info *table, char **args);
-void	sleep_and_think(t_philo *philo);
-bool	take_forks(t_philo *philo);
 
 #endif //PHILOSOPHERS_H
