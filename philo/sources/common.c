@@ -43,6 +43,7 @@ size_t	get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
+//TODO: Implement a table for messages
 void	note(size_t start_time, int id, char *message, t_mutex *print)
 {
 	pthread_mutex_lock(print);
