@@ -14,13 +14,11 @@
 
 int	main(int argc, char **argv)
 {
-	t_info	table;
+	t_table table;
 
 	if (argc < 5 || argc > 6)
 		error(WRONG_ARG_COUNT);
-	set_table(&table, ++argv);
+	set_table(&table, argv);
 	manage_dinner(&table);
-	free(table.forks);
-	free(table.philosophers);
 	return (EXIT_SUCCESS);
 }

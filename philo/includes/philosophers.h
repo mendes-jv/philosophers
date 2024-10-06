@@ -24,26 +24,10 @@
 
 // Structs
 typedef pthread_mutex_t	t_mutex;
+typedef pthread_t t_tid;
+typedef struct s_philo t_philo;
 
-typedef struct s_philo
-{
-	size_t		id;
-	size_t		meals_count;
-	size_t		meal_time;
-	ssize_t		time_to_die;
-	ssize_t		time_to_eat;
-	ssize_t		time_to_sleep;
-	size_t		start_time;
-	t_mutex		*left_fork;
-	t_mutex		*right_fork;
-	t_mutex 	*print;
-	t_mutex		*life;
-	t_mutex 	*meal;
-	bool		is_alive;
-	pthread_t	tid;
-}	t_philo;
-
-typedef struct s_info
+typedef struct s_table
 {
 	ssize_t	philo_count;
 	ssize_t	time_to_die;
@@ -52,8 +36,18 @@ typedef struct s_info
 	ssize_t	meal_count;
 	size_t	start_time;
 	t_philo	*philosophers;
-	t_mutex	*forks;
-}	t_info;
+	t_mutex print;
+	t_mutex infos[10];
+} t_table;
+
+struct s_philo {
+	size_t id;
+	size_t meals_count;
+	size_t last_meal_time;
+	t_table *table;
+	t_tid tid;
+	t_mutex fork;
+};
 
 //Definitions
 # ifndef WRONG_ARG_COUNT
@@ -97,10 +91,6 @@ SIZE_T_MAX/1000.\033[0m"
 #  define MALLOC_ERROR "\033[0;31mError allocating memory.\033[0m"
 # endif //MALLOC_ERROR
 
-# ifndef MUTEX_ERROR
-#  define MUTEX_ERROR "\033[0;31mError creating mutex.\033[0m"
-# endif //MUTEX_ERROR
-
 # ifndef TAKEN_FORK
 #  define TAKEN_FORK "\033[0;32m has taken a fork.\033[0m"
 # endif //TAKEN_FORK
@@ -122,12 +112,12 @@ SIZE_T_MAX/1000.\033[0m"
 # endif //DEAD
 
 // Prototypes
-ssize_t	atod(char *arg);
+void set_table(t_table *table, char **args);
+
+void manage_dinner(t_table *table);
 void	*conscience(void *arg);
 void	error(char *message);
 size_t	get_time(void);
-void	manage_dinner(t_info *table);
 void	note(size_t start_time, int id, char *message, t_mutex *print);
-void	set_table(t_info *table, char **args);
 
 #endif //PHILOSOPHERS_H
