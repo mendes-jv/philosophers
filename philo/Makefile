@@ -24,7 +24,7 @@ MKDIR					:= mkdir -p
 RM						:= rm -rf
 
 # Sources
-FILES					:= common conscience manage_dinner philosophers set_table
+FILES					:= common conscience manage_dinner philosophers set_table mutex_access mutex_access_two
 SOURCES					:= $(addprefix $(SOURCES_DIR), $(addsuffix .c, $(FILES)))
 OBJECTS					:= $(addprefix $(OBJECTS_DIR), $(addsuffix .o, $(FILES)))
 HEADERS					:= -I $(HEADERS_DIR)

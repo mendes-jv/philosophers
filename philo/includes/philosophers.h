@@ -27,8 +27,23 @@ typedef pthread_mutex_t	t_mutex;
 typedef pthread_t t_tid;
 typedef struct s_philo t_philo;
 
+typedef enum e_info {
+	VISIBILITY = 0,
+	START_TIME,
+	PHILO_COUNT,
+	MEALS_COUNT,
+	TIME_TO_EAT,
+	TIME_TO_DIE,
+	TIME_TO_SLEEP,
+	PHILO_ID,
+	PHILO_MEAL_COUNT,
+	PHILO_LMEAL_TIME,
+	INFO_MUTEX_COUNT
+} t_info;
+
 typedef struct s_table
 {
+	bool is_visible;
 	ssize_t	philo_count;
 	ssize_t	time_to_die;
 	ssize_t	time_to_eat;
@@ -116,8 +131,31 @@ void set_table(t_table *table, char **args);
 
 void manage_dinner(t_table *table);
 void	*conscience(void *arg);
+
+void *observer(void *arg);
 void	error(char *message);
+
+size_t note(t_philo *philo, char *message);
 size_t	get_time(void);
-void	note(size_t start_time, int id, char *message, t_mutex *print);
+
+size_t get_meal_count(t_table *table);
+
+size_t get_philo_count(t_table *table);
+
+size_t get_time_to_eat(t_table *table);
+
+size_t get_time_to_sleep(t_table *table);
+
+size_t get_time_to_die(t_table *table);
+
+size_t get_philo_id(t_philo *philo);
+
+size_t get_philo_meal_count(t_philo *philo);
+
+size_t get_philo_last_meal_time(t_philo *philo);
+
+size_t get_duration(t_table *table);
+
+bool get_visibility(t_table *table);
 
 #endif //PHILOSOPHERS_H

@@ -12,67 +12,107 @@
 
 #include "../includes/philosophers.h"
 
-static bool	check_life(t_philo *philo);
-static bool	take_forks(t_philo *philo);
+static void take_forks(t_philo *philo);
 static void	eat(t_philo *philo);
+
+static void drop_forks(t_philo *philo);
 static void	sleep_and_think(t_philo *philo);
 
 void	*conscience(void *arg)
 {
-	t_philo	*philo;
+	t_philo *philosopher;
 
-	philo = ((t_philo *)arg);
-	if (philo->id % 2)
-		usleep(100);
-	while (check_life(philo))
+	philosopher = ((t_philo *) arg);
+	if (get_philo_count(philosopher->table) == 1) {
+		note(philosopher, TAKEN_FORK);
+		return (NULL);
+	}
+	while (get_visibility(philosopher->table))
 	{
-		if (!take_forks(philo))
-			return (NULL);
-		eat(philo);
-		sleep_and_think(philo);
+		take_forks(philosopher);
+		eat(philosopher);
+		drop_forks(philosopher);
+		sleep_and_think(philosopher);
 	}
 	return (NULL);
 }
 
-static bool	check_life(t_philo *philo)
+static void take_forks(t_philo *philo)
 {
-	bool is_alive;
-	pthread_mutex_lock(philo->life);
-	is_alive = philo->is_alive;
-	pthread_mutex_unlock(philo->life);
-	return (is_alive);
-}
+	size_t philo_id;
+	size_t last_philo;
 
-static bool	take_forks(t_philo *philo)
-{
-	pthread_mutex_lock(philo->left_fork);
-	note(philo->start_time, philo->id, TAKEN_FORK, philo->print);
-	if (philo->right_fork == philo->left_fork)
+	if (!get_visibility(philo->table))
+		return;
+	philo_id = get_philo_id(philo);
+	last_philo = get_philo_id(philo) - 1;
+	if (philo_id % 2 == 0)
 	{
-		usleep(philo->time_to_die);
-		pthread_mutex_unlock(philo->left_fork);
-		return (false);
+		pthread_mutex_lock(&philo->fork);
+		if (philo_id == last_philo)
+			pthread_mutex_lock(&philo->table->philosophers->fork);
+		else
+			pthread_mutex_lock(&philo->table->philosophers[philo_id + 1].fork);
+	} else {
+		if (philo_id == last_philo)
+			pthread_mutex_lock(&philo->table->philosophers->fork);
+		else
+			pthread_mutex_lock(&philo->table->philosophers[philo_id + 1].fork);
+		pthread_mutex_lock(&philo->fork);
 	}
-	pthread_mutex_lock(philo->right_fork);
-	note(philo->start_time, philo->id, TAKEN_FORK, philo->print);
-	return (true);
+	note(philo, TAKEN_FORK);
+	note(philo, TAKEN_FORK);
 }
 
 static void	eat(t_philo *philo)
 {
-	pthread_mutex_lock(philo->meal);
-	note(philo->start_time, philo->id, EATING, philo->print);
-	philo->meal_time = get_time();
-	philo->meals_count--;
-	pthread_mutex_unlock(philo->meal);
-	usleep(philo->time_to_eat);
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
+	size_t time_to_eat;
+
+	if (!get_visibility(philo->table))
+		return;
+	time_to_eat = get_time_to_eat(philo->table);
+	pthread_mutex_lock(philo->table->infos + PHILO_LMEAL_TIME);
+	philo->last_meal_time = note(philo, EATING);
+	pthread_mutex_unlock(philo->table->infos + PHILO_LMEAL_TIME);
+	usleep(time_to_eat);
+	pthread_mutex_lock(philo->table->infos + PHILO_MEAL_COUNT);
+	philo->meals_count++;
+	pthread_mutex_unlock(philo->table->infos + PHILO_MEAL_COUNT);
+}
+
+static void drop_forks(t_philo *philo)
+{
+	size_t philo_id;
+	size_t last_philo;
+
+	philo_id = get_philo_id(philo);
+	last_philo = get_philo_id(philo) - 1;
+	if (philo_id % 2 == 0) {
+		pthread_mutex_unlock(&philo->fork);
+		if (philo_id == last_philo)
+			pthread_mutex_unlock(&philo->table->philosophers->fork);
+		else
+			pthread_mutex_unlock(&philo->table->philosophers[philo_id + 1].fork);
+	} else {
+		if (philo_id == last_philo)
+			pthread_mutex_unlock(&philo->table->philosophers->fork);
+		else
+			pthread_mutex_unlock(&philo->table->philosophers[philo_id + 1].fork);
+		pthread_mutex_unlock(&philo->fork);
+	}
 }
 
 static void	sleep_and_think(t_philo *philo)
 {
-	note(philo->start_time, philo->id, SLEEPING, philo->print);
-	usleep(philo->time_to_sleep);
-	note(philo->start_time, philo->id, THINKING, philo->print);
+	size_t time_to_sleep;
+
+	if (!get_visibility(philo->table))
+		return;
+	time_to_sleep = get_time_to_sleep(philo->table);
+	note(philo, SLEEPING);
+	usleep(time_to_sleep);
+	if (!get_visibility(philo->table))
+		return;
+	note(philo, THINKING);
+	usleep(1000);
 }

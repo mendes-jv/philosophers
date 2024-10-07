@@ -26,9 +26,15 @@ size_t	get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	note(size_t start_time, int id, char *message, t_mutex *print)
+size_t note(t_philo *philo, char *message)
 {
-	pthread_mutex_lock(print);
-	printf("%zu %d %s\n", get_time() - start_time, id, message);
-	pthread_mutex_unlock(print);
+	size_t duration;
+
+	if (!get_visibility(philo->table))
+		return (false);
+	duration = get_duration(philo->table);
+	pthread_mutex_lock(&philo->table->print);
+	printf("%zu %zu %s\n", duration, philo->id, message);
+	pthread_mutex_unlock(&philo->table->print);
+	return (duration * 1000);
 }

@@ -12,101 +12,83 @@
 
 #include "../includes/philosophers.h"
 
-static void	*observer(void *arg);
-static bool	set_possible_death(t_info *table);
-static bool	check_starvation(t_philo *philo);
-static bool	is_all_fed(t_info *table);
+static bool check_life(t_table *table, size_t philo_count);
 
-void	manage_dinner(t_info *table)
+static bool is_all_fed(t_table *table, size_t meal_count, size_t philo_count);
+
+void manage_dinner(t_table *table)
 {
 	pthread_t	observer_tid;
 	int			index;
 
 	index = 0;
-	if (pthread_create(&observer_tid, NULL, observer, table))
-		error(""); //TODO: error message and thread creation and join check
+	table->start_time = get_time();
 	while (index < table->philo_count)
 	{
-		pthread_create(&table->philosophers[index].tid, NULL,
-			conscience, table->philosophers + index);
-		index++;
+		table->philosophers[index].meals_count = 0;
+		table->philosophers[index].last_meal_time = table->start_time;
+		table->philosophers[index].table = table;
+		table->philosophers[index].id = index;
+		pthread_mutex_init(&table->philosophers[index++].fork, NULL);
 	}
+	pthread_create(&observer_tid, NULL, observer, table);
+	index = -1;
+	while (++index < table->philo_count)
+		pthread_create(&table->philosophers[index].tid, NULL, conscience, table->philosophers + index);
+	pthread_join(observer_tid, NULL);
 	index = 0;
 	while (index < table->philo_count)
 		pthread_join(table->philosophers[index++].tid, NULL);
 	index = 0;
 	while (index < table->philo_count)
-		pthread_mutex_destroy(&table->forks[index++]);
-	pthread_mutex_destroy(table->philosophers->print);
+		pthread_mutex_destroy(&table->philosophers[index++].fork);
+	pthread_mutex_destroy(&table->print);
+	index = 0;
+	while (index < INFO_MUTEX_COUNT)
+		pthread_mutex_destroy(table->infos + index++);
+	free(table->philosophers);
 }
 
-static void	*observer(void *arg)
+void *observer(void *arg)
 {
-	t_info	*table;
+	t_table *table;
+	size_t meal_count;
+	size_t philo_count;
 
-	table = (t_info *)arg;
-	while (set_possible_death(table) && !is_all_fed(table))
-		usleep(1000);
+	table = (t_table *) arg;
+	meal_count = get_meal_count(table);
+	philo_count = get_philo_count(table);
+	while (check_life(table, philo_count) && !is_all_fed(table, meal_count, philo_count));
+	pthread_mutex_lock(&table->infos[VISIBILITY]);
+	table->is_visible = false;
+	pthread_mutex_unlock(&table->infos[VISIBILITY]);
 	return (NULL);
 }
 
-static bool	set_possible_death(t_info *table)
+static bool check_life(t_table *table, size_t philo_count)
 {
-	t_philo	*philosophers;
-	int		index;
+	size_t index;
 
-	index = 0;
-	philosophers = table->philosophers;
-	while (index < table->philo_count)
+	index = -1;
+	while (++index < philo_count)
 	{
-		if (check_starvation(philosophers + index))
+		if (get_duration(table) - get_philo_last_meal_time(table->philosophers + index)
+			> get_time_to_die(table))
 		{
-			note(philosophers->start_time, philosophers[index].id, DEAD,
-				 philosophers->print);
-			pthread_mutex_lock(philosophers->life);
-			philosophers[index].is_alive = false;
-			pthread_mutex_unlock(philosophers->life);
+			note(table->philosophers + index, DEAD);
+			return (false);
 		}
-		index++;
 	}
+	return (true);
 }
 
-static bool check_starvation(t_philo *philo)
+static bool is_all_fed(t_table *table, size_t meal_count, size_t philo_count)
 {
-	bool	is_starving;
+	size_t index;
 
-	is_starving = false;
-	pthread_mutex_lock(philo->meal);
-	if (get_time() - philo->meal_time >= (size_t)philo->time_to_die)
-		is_starving = true;
-	pthread_mutex_unlock(philo->meal);
-	return (is_starving);
-}
-
-static bool	is_all_fed(t_info *table)
-{
-	bool	is_all_fed;
-	int		index;
-	int		fed_count;
-
-	is_all_fed = false;
 	index = 0;
-	fed_count = 0;
-	//TODO: check if time_to_eat is really setted or if it is not passed as an argument
-	while (index < table->philo_count)
-	{
-		pthread_mutex_lock(table->philosophers[index].meal);
-		if (!table->philosophers[index].meals_count)
-			fed_count++;
-		pthread_mutex_unlock(table->philosophers[index].meal);
-		index++;
-	}
-	if (fed_count == table->philo_count)
-	{
-		pthread_mutex_lock(table->philosophers->meal);
-		table->philosophers->is_alive = false;
-		pthread_mutex_unlock(table->philosophers->meal);
-		is_all_fed = true;
-	}
-	return (is_all_fed);
+	while (index < philo_count)
+		if (get_philo_meal_count(table->philosophers + index++) < meal_count)
+			return (false);
+	return (true);
 }

@@ -19,16 +19,14 @@ void set_table(t_table *table, char **args)
 {
 	size_t mutex_count;
 
-	mutex_count = 10;
-	*table = (t_table) {atod(args[0]), atod(args[1]) * 1000,
-		atod(args[2]) * 1000, atod(args[3]) * 1000, atod(args[4]),
-						get_time(), NULL, PTHREAD_MUTEX_INITIALIZER,
-						{PTHREAD_MUTEX_INITIALIZER, PTHREAD_MUTEX_INITIALIZER, PTHREAD_MUTEX_INITIALIZER,
-						 PTHREAD_MUTEX_INITIALIZER,
-						 PTHREAD_MUTEX_INITIALIZER, PTHREAD_MUTEX_INITIALIZER, PTHREAD_MUTEX_INITIALIZER,
-						 PTHREAD_MUTEX_INITIALIZER,
-						 PTHREAD_MUTEX_INITIALIZER, PTHREAD_MUTEX_INITIALIZER}};
+	mutex_count = INFO_MUTEX_COUNT;
+	table->philo_count = atod(args[0]);
+	table->time_to_die = atod(args[1]);
+	table->time_to_eat = atod(args[2]);
+	table->time_to_sleep = atod(args[3]);
+	table->meal_count = atod(args[4]);
 	check_values(*table);
+	table->is_visible = true;
 	table->philosophers = malloc(sizeof(t_philo) * table->philo_count);
 	if (!table->philosophers)
 		error(MALLOC_ERROR);
