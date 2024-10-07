@@ -12,12 +12,12 @@
 
 #include "../includes/philosophers.h"
 
-static ssize_t atod(char *arg);
-static void check_values(t_table table);
+static ssize_t	atod(char *arg);
+static void		check_values(t_table table);
 
-void set_table(t_table *table, char **args)
+void	set_table(t_table *table, char **args)
 {
-	size_t mutex_count;
+	size_t	mutex_count;
 
 	mutex_count = INFO_MUTEX_COUNT;
 	table->philo_count = atod(args[0]);
@@ -27,17 +27,17 @@ void set_table(t_table *table, char **args)
 	table->meal_count = atod(args[4]);
 	check_values(*table);
 	table->is_visible = true;
-	table->philosophers = malloc(sizeof(t_philo) * table->philo_count);
-	if (!table->philosophers)
-		error(MALLOC_ERROR);
 	pthread_mutex_init(&table->print, NULL);
 	while (mutex_count--)
 		pthread_mutex_init(table->infos + mutex_count, NULL);
+	table->philosophers = malloc(sizeof(t_philo) * table->philo_count);
+	if (!table->philosophers)
+		error(MALLOC_ERROR);
 }
 
-static ssize_t atod(char *arg)
+static ssize_t	atod(char *arg)
 {
-	ssize_t number;
+	ssize_t	number;
 
 	if (!arg)
 		return (0);
@@ -45,14 +45,14 @@ static ssize_t atod(char *arg)
 	while (*arg)
 	{
 		if (*arg < '0' || *arg > '9'
-			|| (number * 10) > (ssize_t) (ULONG_MAX / 1000))
+			|| (number * 10) > (ssize_t)(ULONG_MAX / 1000))
 			return (-1);
 		number = (number * 10) + (*arg++ - '0');
 	}
 	return (number);
 }
 
-static void check_values(t_table table)
+static void	check_values(t_table table)
 {
 	char	*message;
 

@@ -14,7 +14,7 @@
 
 int	main(int argc, char **argv)
 {
-	t_table table;
+	t_table	table;
 
 	if (argc < 5 || argc > 6)
 		error(WRONG_ARG_COUNT);

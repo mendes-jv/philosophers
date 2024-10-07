@@ -24,8 +24,8 @@
 
 // Structs
 typedef pthread_mutex_t	t_mutex;
-typedef pthread_t t_tid;
-typedef struct s_philo t_philo;
+typedef pthread_t		t_tid;
+typedef struct s_philo	t_philo;
 
 typedef enum e_info {
 	VISIBILITY = 0,
@@ -39,11 +39,11 @@ typedef enum e_info {
 	PHILO_MEAL_COUNT,
 	PHILO_LMEAL_TIME,
 	INFO_MUTEX_COUNT
-} t_info;
+}	t_info;
 
 typedef struct s_table
 {
-	bool is_visible;
+	bool	is_visible;
 	ssize_t	philo_count;
 	ssize_t	time_to_die;
 	ssize_t	time_to_eat;
@@ -51,17 +51,17 @@ typedef struct s_table
 	ssize_t	meal_count;
 	size_t	start_time;
 	t_philo	*philosophers;
-	t_mutex print;
-	t_mutex infos[10];
-} t_table;
+	t_mutex	print;
+	t_mutex	infos[10];
+}	t_table;
 
 struct s_philo {
-	size_t id;
-	size_t meals_count;
-	size_t last_meal_time;
-	t_table *table;
-	t_tid tid;
-	t_mutex fork;
+	size_t	id;
+	size_t	meals_count;
+	size_t	last_meal_time;
+	t_table	*table;
+	t_tid	tid;
+	t_mutex	fork;
 };
 
 //Definitions
@@ -127,35 +127,22 @@ SIZE_T_MAX/1000.\033[0m"
 # endif //DEAD
 
 // Prototypes
-void set_table(t_table *table, char **args);
-
-void manage_dinner(t_table *table);
+void	set_table(t_table *table, char **args);
+void	manage_dinner(t_table *table);
 void	*conscience(void *arg);
-
-void *observer(void *arg);
+void	*observer(void *arg);
 void	error(char *message);
-
-size_t note(t_philo *philo, char *message);
+size_t	note(t_philo *philo, char *message);
 size_t	get_time(void);
-
-size_t get_meal_count(t_table *table);
-
-size_t get_philo_count(t_table *table);
-
-size_t get_time_to_eat(t_table *table);
-
-size_t get_time_to_sleep(t_table *table);
-
-size_t get_time_to_die(t_table *table);
-
-size_t get_philo_id(t_philo *philo);
-
-size_t get_philo_meal_count(t_philo *philo);
-
-size_t get_philo_last_meal_time(t_philo *philo);
-
-size_t get_duration(t_table *table);
-
-bool get_visibility(t_table *table);
+size_t	get_meal_count(t_table *table);
+size_t	get_philo_count(t_table *table);
+size_t	get_time_to_eat(t_table *table);
+size_t	get_time_to_sleep(t_table *table);
+size_t	get_time_to_die(t_table *table);
+size_t	get_philo_id(t_philo *philo);
+size_t	get_philo_meal_count(t_philo *philo);
+size_t	get_philo_last_meal_time(t_philo *philo);
+size_t	get_duration(t_table *table);
+bool	get_visibility(t_table *table);
 
 #endif //PHILOSOPHERS_H

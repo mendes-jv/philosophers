@@ -19,7 +19,7 @@ HEADERS_DIR				:= includes/
 
 MAKE					:= make
 CC						:= cc
-CFLAGS					:= -Wall -Wextra -Werror -Wunreachable-code -Ofast -g3 -O3
+CFLAGS					:= -Wall -Wextra -Werror
 MKDIR					:= mkdir -p
 RM						:= rm -rf
 

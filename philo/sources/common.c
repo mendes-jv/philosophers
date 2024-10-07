@@ -26,15 +26,15 @@ size_t	get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-size_t note(t_philo *philo, char *message)
+size_t	note(t_philo *philo, char *message)
 {
-	size_t duration;
+	size_t	duration;
 
 	if (!get_visibility(philo->table))
 		return (false);
 	duration = get_duration(philo->table);
 	pthread_mutex_lock(&philo->table->print);
-	printf("%zu %zu %s\n", duration, philo->id, message);
+	printf("%zu %zu %s\n", duration, philo->id + 1, message);
 	pthread_mutex_unlock(&philo->table->print);
-	return (duration * 1000);
+	return (duration);
 }

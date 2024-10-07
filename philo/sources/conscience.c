@@ -12,18 +12,18 @@
 
 #include "../includes/philosophers.h"
 
-static void take_forks(t_philo *philo);
+static void	take_forks(t_philo *philo);
 static void	eat(t_philo *philo);
-
-static void drop_forks(t_philo *philo);
+static void	drop_forks(t_philo *philo);
 static void	sleep_and_think(t_philo *philo);
 
 void	*conscience(void *arg)
 {
-	t_philo *philosopher;
+	t_philo	*philosopher;
 
 	philosopher = ((t_philo *) arg);
-	if (get_philo_count(philosopher->table) == 1) {
+	if (get_philo_count(philosopher->table) == 1)
+	{
 		note(philosopher, TAKEN_FORK);
 		return (NULL);
 	}
@@ -37,15 +37,15 @@ void	*conscience(void *arg)
 	return (NULL);
 }
 
-static void take_forks(t_philo *philo)
+static void	take_forks(t_philo *philo)
 {
-	size_t philo_id;
-	size_t last_philo;
+	size_t	philo_id;
+	size_t	last_philo;
 
 	if (!get_visibility(philo->table))
-		return;
+		return ;
 	philo_id = get_philo_id(philo);
-	last_philo = get_philo_id(philo) - 1;
+	last_philo = get_philo_count(philo->table) - 1;
 	if (philo_id % 2 == 0)
 	{
 		pthread_mutex_lock(&philo->fork);
@@ -53,7 +53,9 @@ static void take_forks(t_philo *philo)
 			pthread_mutex_lock(&philo->table->philosophers->fork);
 		else
 			pthread_mutex_lock(&philo->table->philosophers[philo_id + 1].fork);
-	} else {
+	}
+	else
+	{
 		if (philo_id == last_philo)
 			pthread_mutex_lock(&philo->table->philosophers->fork);
 		else
@@ -66,53 +68,56 @@ static void take_forks(t_philo *philo)
 
 static void	eat(t_philo *philo)
 {
-	size_t time_to_eat;
+	size_t	time_to_eat;
 
 	if (!get_visibility(philo->table))
-		return;
+		return ;
 	time_to_eat = get_time_to_eat(philo->table);
 	pthread_mutex_lock(philo->table->infos + PHILO_LMEAL_TIME);
 	philo->last_meal_time = note(philo, EATING);
 	pthread_mutex_unlock(philo->table->infos + PHILO_LMEAL_TIME);
-	usleep(time_to_eat);
+	usleep(time_to_eat * 1000);
 	pthread_mutex_lock(philo->table->infos + PHILO_MEAL_COUNT);
 	philo->meals_count++;
 	pthread_mutex_unlock(philo->table->infos + PHILO_MEAL_COUNT);
 }
 
-static void drop_forks(t_philo *philo)
+static void	drop_forks(t_philo *philo)
 {
-	size_t philo_id;
-	size_t last_philo;
+	size_t	id;
+	size_t	last_philo;
 
-	philo_id = get_philo_id(philo);
-	last_philo = get_philo_id(philo) - 1;
-	if (philo_id % 2 == 0) {
+	id = get_philo_id(philo);
+	last_philo = get_philo_count(philo->table) - 1;
+	if (id % 2 == 0)
+	{
 		pthread_mutex_unlock(&philo->fork);
-		if (philo_id == last_philo)
+		if (id == last_philo)
 			pthread_mutex_unlock(&philo->table->philosophers->fork);
 		else
-			pthread_mutex_unlock(&philo->table->philosophers[philo_id + 1].fork);
-	} else {
-		if (philo_id == last_philo)
+			pthread_mutex_unlock(&philo->table->philosophers[id + 1].fork);
+	}
+	else
+	{
+		if (id == last_philo)
 			pthread_mutex_unlock(&philo->table->philosophers->fork);
 		else
-			pthread_mutex_unlock(&philo->table->philosophers[philo_id + 1].fork);
+			pthread_mutex_unlock(&philo->table->philosophers[id + 1].fork);
 		pthread_mutex_unlock(&philo->fork);
 	}
 }
 
 static void	sleep_and_think(t_philo *philo)
 {
-	size_t time_to_sleep;
+	size_t	time_to_sleep;
 
 	if (!get_visibility(philo->table))
-		return;
+		return ;
 	time_to_sleep = get_time_to_sleep(philo->table);
 	note(philo, SLEEPING);
-	usleep(time_to_sleep);
+	usleep(time_to_sleep * 1000);
 	if (!get_visibility(philo->table))
-		return;
+		return ;
 	note(philo, THINKING);
 	usleep(1000);
 }
